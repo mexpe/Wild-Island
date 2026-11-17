@@ -1,4 +1,4 @@
-# Wild Island · V0.2
+# Wild Island · V0.3
 
 Prototipo spaziale 2D per browser: esplora una nave a piedi e raggiungi il timone per pilotarla. TypeScript, Canvas 2D, HTML/CSS e Vite; nessun backend, account o asset esterno.
 
@@ -14,11 +14,11 @@ Apri l'indirizzo indicato da Vite nel browser desktop. Il gioco parte direttamen
 - Interni: **WASD** per camminare; **E** vicino alla console per pilotare.
 - Spazio: **W** accelera, **S** frena, **A/D** ruotano, **E** lascia il timone; **rotellina su/giù** per zoom in/out (0.01×–3×).
 - Scala: una cella interna = **1 m**; scafo lungo **12 m**. Velocità in m/s e barra della scala in metri/chilometri.
-- Dieci campi di asteroidi immobili, generati con seed fisso in circa 5 × 5 km. Il primo è a **200 m sulla destra** della partenza: riduci lo zoom a circa 0.1× per vederlo. È intenzionalmente possibile attraversarli. A grande distanza un indicatore azzurro segnala la nave.
-- La nave mantiene l'inerzia anche mentre cammini al suo interno.
+- Dieci campi di asteroidi immobili, generati con seed fisso in circa 5 × 5 km. Il primo è a **200 m sulla destra** della partenza: riduci lo zoom a circa 0.1× per vederlo. La nave collide con tutti i corpi rocciosi: gli impatti frenano o deviano il moto e consentono lo scivolamento, senza danni. A grande distanza un indicatore azzurro segnala la nave.
+- La nave mantiene l'inerzia e collide con gli asteroidi anche mentre cammini al suo interno.
 
 ```sh
-npm test          # test mirati di simulazione, zoom e rendering
+npm test          # test mirati di simulazione, collisioni, zoom e rendering
 npm run check    # controllo TypeScript
 npm run build    # controllo TypeScript e build statica in dist/
 npm run preview  # prova della build
