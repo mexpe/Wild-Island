@@ -3,6 +3,7 @@ import { Keyboard } from './input.ts';
 import { createGame } from './state.ts';
 import { update, nearHelm } from './simulation.ts';
 import { render } from './render.ts';
+import { unitsToMeters } from './space.ts';
 import { createZoom, changeZoom, smoothZoom } from './zoom.ts';
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const ctx = canvas.getContext('2d');
@@ -37,7 +38,7 @@ function frame(now: number): void {
   const interior = game.mode === 'interior';
   mode.textContent = interior ? 'A bordo' : 'Navigazione';
   controls.textContent = interior ? 'W A S D  Muoviti\nE  Interagisci con il timone' : 'W  Accelera · S  Frena\nA D  Ruota\nE  Lascia il timone\nRotellina  Zoom · ' + spaceZoom.current.toFixed(2) + '×';
-  speed.textContent = Math.hypot(game.ship.velocity.x, game.ship.velocity.y).toFixed(1);
+  speed.textContent = unitsToMeters(Math.hypot(game.ship.velocity.x, game.ship.velocity.y)).toFixed(1);
   prompt.textContent = interior && nearHelm(game) ? 'Premi E per pilotare' : '';
   requestAnimationFrame(frame);
 }

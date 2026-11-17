@@ -1,5 +1,5 @@
 // Stato esclusivamente visivo, indipendente dalla simulazione della nave.
-export const zoomTuning = { default: 1, min: .25, max: 3, step: 1.15, pixelsPerStep: 100, smoothing: 12 };
+export const zoomTuning = { default: 1, min: .01, max: 3, step: 1.15, pixelsPerStep: 100, smoothing: 12 };
 export function createZoom() { return { current: zoomTuning.default, target: zoomTuning.default }; }
 export type SpaceZoom = ReturnType<typeof createZoom>;
 export function changeZoom(zoom: SpaceZoom, deltaY: number, deltaMode = 0): void {
