@@ -1,4 +1,4 @@
-# Wild Island · V0.1
+# Wild Island · V0.2
 
 Prototipo spaziale 2D per browser: esplora una nave a piedi e raggiungi il timone per pilotarla. TypeScript, Canvas 2D, HTML/CSS e Vite; nessun backend, account o asset esterno.
 
@@ -12,11 +12,11 @@ npm run dev
 Apri l'indirizzo indicato da Vite nel browser desktop. Il gioco parte direttamente a bordo; percorri il corridoio centrale verso l'alto fino alla console azzurra.
 
 - Interni: **WASD** per camminare; **E** vicino alla console per pilotare.
-- Spazio: **W** accelera, **S** frena, **A/D** ruotano, **E** lascia il timone.
+- Spazio: **W** accelera, **S** frena, **A/D** ruotano, **E** lascia il timone; **rotellina su/giù** per zoom in/out (0.25×–3×).
 - La nave mantiene l'inerzia anche mentre cammini al suo interno.
 
 ```sh
-npm test          # test mirati della simulazione
+npm test          # test mirati di simulazione, zoom e rendering
 npm run check    # controllo TypeScript
 npm run build    # controllo TypeScript e build statica in dist/
 npm run preview  # prova della build
