@@ -21,15 +21,25 @@ function hullPath(ctx: CanvasRenderingContext2D): void {
   hull.forEach(([x,y],i) => { if (i === 0) ctx.moveTo(x * tileSize, y * tileSize); else ctx.lineTo(x * tileSize, y * tileSize); });
   ctx.closePath();
 }
-export function render(ctx: CanvasRenderingContext2D, game: GameState, width: number, height: number): void {
+export function render(ctx: CanvasRenderingContext2D, game: GameState, width: number, height: number, zoom = 1): void {
   ctx.fillStyle = '#070c14'; ctx.fillRect(0, 0, width, height);
-  stars(ctx, width, height, game.ship.position.x, game.ship.position.y);
+  const flight = game.mode === 'flight';
+  const fit = Math.max(.15, Math.min(1, (height - 175) / (layout.length * tileSize), (width * .65) / (layout[0].length * tileSize)));
+  const scale = flight ? fit * zoom : fit;
+  if (flight) {
+    // Same world-to-screen scale and center for stars and ship; cull in world units.
+    ctx.save();
+    ctx.translate(width / 2, height / 2);
+    ctx.scale(scale, scale);
+    ctx.translate(-width / (2 * scale), -height / (2 * scale));
+    stars(ctx, width / scale, height / scale, game.ship.position.x, game.ship.position.y);
+    ctx.restore();
+  } else stars(ctx, width, height, game.ship.position.x, game.ship.position.y);
   ctx.save();
-  // Reserve the left side for the small HUD on desktop; scale down on short windows.
-  const centerX = width > 800 ? width * .59 : width * .62;
-  ctx.translate(centerX, height * .53);
-  const scale = Math.min(1, (height - 175) / (layout.length * tileSize), (width * .65) / (layout[0].length * tileSize));
-  ctx.scale(Math.max(.15, scale), Math.max(.15, scale));
+  // Preserve the original interior framing; flight is centered on the viewport.
+  const centerX = flight ? width / 2 : width > 800 ? width * .59 : width * .62;
+  ctx.translate(centerX, flight ? height / 2 : height * .53);
+  ctx.scale(scale, scale);
   if (game.mode === 'flight') ctx.rotate(game.ship.angle);
   ctx.translate(-layout[0].length * tileSize / 2, -layout.length * tileSize / 2);
   hullPath(ctx); ctx.fillStyle = '#293744'; ctx.fill(); ctx.strokeStyle = '#8b9ca9'; ctx.lineWidth = 2; ctx.stroke();
