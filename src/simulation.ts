@@ -1,5 +1,7 @@
 import { helm, tileSize, walkable } from './layout.ts';
 import { tuning, type GameState, type Vector } from './state.ts';
+import { moveShip, rotateShip, spaceRocks } from './collisions.ts';
+import type { Asteroid } from './asteroids.ts';
 import type { Controls } from './input.ts';
 export function nearHelm(game: GameState): boolean {
   return Math.hypot(game.character.position.x - helm.x, game.character.position.y - helm.y) <= tuning.interactionRange;
@@ -15,7 +17,7 @@ export function canStand(position: Vector, radius: number): boolean {
   }
   return true;
 }
-export function update(game: GameState, controls: Controls, dt: number): void {
+export function update(game: GameState, controls: Controls, dt: number, rocks: readonly Asteroid[] = spaceRocks): void {
   if (!Number.isFinite(dt) || dt <= 0) return;
   if (controls.interact) {
     if (game.mode === 'flight') {
@@ -26,13 +28,13 @@ export function update(game: GameState, controls: Controls, dt: number): void {
   // Small substeps prevent tunnelling and keep the simulation stable at low frame rates.
   const steps = Math.ceil(dt / (1 / 120));
   const step = dt / steps;
-  for (let i = 0; i < steps; i++) simulate(game, controls, step);
+  for (let i = 0; i < steps; i++) simulate(game, controls, step, rocks);
 }
-function simulate(game: GameState, controls: Controls, dt: number): void {
+function simulate(game: GameState, controls: Controls, dt: number, rocks: readonly Asteroid[] = spaceRocks): void {
   const { ship, character } = game;
   ship.thrusting = game.mode === 'flight' && controls.w;
   if (game.mode === 'flight') {
-    ship.angle = (ship.angle + (Number(controls.d) - Number(controls.a)) * tuning.rotationSpeed * dt) % (Math.PI * 2);
+    rotateShip(ship, (Number(controls.d) - Number(controls.a)) * tuning.rotationSpeed * dt, rocks);
     if (ship.thrusting) {
       ship.velocity.x += Math.sin(ship.angle) * tuning.acceleration * dt;
       ship.velocity.y -= Math.cos(ship.angle) * tuning.acceleration * dt;
@@ -52,6 +54,5 @@ function simulate(game: GameState, controls: Controls, dt: number): void {
     if (canStand(vertical, character.radius)) character.position.y = vertical.y;
   }
   // Always simulate the same ship, including while the character is walking inside.
-  ship.position.x += ship.velocity.x * dt;
-  ship.position.y += ship.velocity.y * dt;
+  moveShip(ship, dt, rocks);
 }

@@ -2,7 +2,7 @@ import { layout, tileSize, helm } from './layout.ts';
 import type { GameState } from './state.ts';
 import { asteroidFields, visibleRock } from './asteroids.ts';
 import { scaleBar } from './space.ts';
-const hull = [[4,0],[9,0],[9,1],[10,1],[10,2],[11,2],[11,3],[12,3],[12,10],[11,10],[11,12],[2,12],[2,10],[1,10],[1,3],[2,3],[2,2],[3,2],[3,1],[4,1]];
+import { hullOutline } from './hull.ts';
 function hash(x: number, y: number): number {
   let n = Math.imul(x, 374761393) ^ Math.imul(y, 668265263);
   n = Math.imul(n ^ (n >>> 13), 1274126177);
@@ -22,7 +22,7 @@ function stars(ctx: CanvasRenderingContext2D, width: number, height: number, x: 
 }
 function hullPath(ctx: CanvasRenderingContext2D): void {
   ctx.beginPath();
-  hull.forEach(([x,y],i) => { if (i === 0) ctx.moveTo(x * tileSize, y * tileSize); else ctx.lineTo(x * tileSize, y * tileSize); });
+  hullOutline.forEach(({x,y},i) => { if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); });
   ctx.closePath();
 }
 export function render(ctx: CanvasRenderingContext2D, game: GameState, width: number, height: number, zoom = 1): void {

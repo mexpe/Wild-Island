@@ -2,7 +2,7 @@
 
 Il personaggio è il protagonista; la nave è un'entità indipendente. Visione: sandbox spaziale originale ispirato alle possibilità di esplorazione di Wayward Terran Frontier: Zero Falls.
 
-## Meccaniche V0.2
+## Meccaniche V0.3
 
 Esplorazione dall'alto su griglia modificabile con pareti esterne, divisori e passaggi; movimento diagonale normalizzato e collisioni cerchio/rettangolo. Interazione con il timone solo entro 57 unità locali. E funziona alla pressione, senza ripetizioni finché resta premuto.
 
@@ -18,7 +18,15 @@ Una cella interna vale 1 m = 36 unità del codice: griglia 13 × 12 celle, scafo
 
 Dieci campi statici in circa 5 × 5 km; seed 73129, primo corpo principale di 60 m a (200 m, 0). Ogni campo: corpo principale 50–100 m e 15–30 frammenti di 2–5, 5–10 e 10–20 m, senza sovrapposizione dei cerchi di ingombro; estensione 200–400 m. La dimensione dichiarata è la massima estensione della geometria orientata sugli assi. Poligoni e colori delle facce sono generati una sola volta in src/asteroids.ts; coordinate globali indipendenti da nave e zoom. Culling per campo e oggetto. A zoom lontani si disegna un sottoinsieme stabile delle stelle per limitare il lavoro; le stelle conservano le coordinate mondo.
 
-Nessuna collisione spaziale, gravità, estrazione, danno, distruzione o movimento autonomo: gli asteroidi sono attraversabili. Gli interni non mostrano asteroidi.
+Gli interni non mostrano asteroidi. Nessuna gravità, estrazione, danno, distruzione o movimento autonomo.
+
+## Collisioni V0.3
+
+Rendering e collisioni condividono la sagoma dello scafo in src/hull.ts (ugelli decorativi esclusi). La geometria riutilizzabile in src/geometry.ts triangola i poligoni semplici concavi con ear clipping. src/collisions.ts conserva i triangoli statici degli asteroidi; prima esclude i corpi distanti con un controllo del segmento percorso e dei raggi, poi calcola il primo contatto tramite SAT continuo sulle coppie di triangoli. Il cerchio non determina il contatto finale. Nessun limite di velocità aggiunto.
+
+Nei sottopassi esistenti la rotazione avanza conservativamente usando la distanza dalle superfici e il raggio dello scafo, fermandosi prima di compenetrare; gli impatti non inducono rotazione. La traslazione arriva al contatto, corregge un piccolo margine e prosegue con la velocità aggiornata. Si modifica solo la componente entrante lungo la normale; la tangenziale resta disponibile per scivolare. Restituzione iniziale 0.15, senza rimbalzo per velocità normali inferiori a 1 unità/s per stabilizzare i contatti lenti. Parametri in collisionTuning. Un recupero geometrico gestisce pose inizialmente sovrapposte. Iterazioni limitate nei contatti multipli: se esaurite si arresta il movimento residuo del sottopasso, senza attraversare ostacoli.
+
+Le collisioni restano attive in entrambe le modalità, in coordinate mondo, indipendenti da zoom e rendering. Gli asteroidi non vengono modificati.
 
 ## Futuro, non implementato
 
