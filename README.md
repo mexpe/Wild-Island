@@ -22,4 +22,8 @@ npm run build    # controllo TypeScript e build statica in dist/
 npm run preview  # prova della build
 ```
 
-Su ambienti con home non scrivibile, aggiungi `--cache /tmp/wild-island-npm-cache` a `npm ci`. Build con percorsi relativi, compatibile con hosting statico sotto directory (incluso GitHub Pages); pubblicazione non configurata.
+Su ambienti con home non scrivibile, aggiungi `--cache /tmp/wild-island-npm-cache` a `npm ci`. La build usa percorsi relativi (`base: './'` in Vite), compatibili con la sottodirectory di GitHub Pages.
+
+## Pubblicazione su GitHub Pages
+
+In **Settings → Pages → Build and deployment**, seleziona **GitHub Actions** come sorgente (una sola volta). Dopo il merge, ogni push su `main` esegue il workflow **Deploy GitHub Pages**: Node.js 24 LTS, `npm ci`, `npm run build` e pubblicazione di `dist/` tramite le Actions ufficiali. Per avviarlo manualmente: **Actions → Deploy GitHub Pages → Run workflow**, selezionando `main`. L’URL pubblicato è visibile nel deployment `github-pages` e in Settings → Pages.
