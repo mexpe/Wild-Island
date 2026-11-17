@@ -12,7 +12,9 @@ npm run dev
 Apri l'indirizzo indicato da Vite nel browser desktop. Il gioco parte direttamente a bordo; percorri il corridoio centrale verso l'alto fino alla console azzurra.
 
 - Interni: **WASD** per camminare; **E** vicino alla console per pilotare.
-- Spazio: **W** accelera, **S** frena, **A/D** ruotano, **E** lascia il timone; **rotellina su/giù** per zoom in/out (0.25×–3×).
+- Spazio: **W** accelera, **S** frena, **A/D** ruotano, **E** lascia il timone; **rotellina su/giù** per zoom in/out (0.01×–3×).
+- Scala: una cella interna = **1 m**; scafo lungo **12 m**. Velocità in m/s e barra della scala in metri/chilometri.
+- Dieci campi di asteroidi immobili, generati con seed fisso in circa 5 × 5 km. Il primo è a **200 m sulla destra** della partenza: riduci lo zoom a circa 0.1× per vederlo. È intenzionalmente possibile attraversarli. A grande distanza un indicatore azzurro segnala la nave.
 - La nave mantiene l'inerzia anche mentre cammini al suo interno.
 
 ```sh

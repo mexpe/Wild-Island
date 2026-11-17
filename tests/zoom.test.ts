@@ -2,10 +2,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createZoom, changeZoom, smoothZoom, zoomTuning } from '../src/zoom.ts';
 import { render } from '../src/render.ts';
+import { asteroidFields } from '../src/asteroids.ts';
 import { createGame } from '../src/state.ts';
 const close = (a: number, b: number) => assert.ok(Math.abs(a - b) < 1e-9);
 test('wheel direction, proportional steps, delta modes and bounds', () => {
   const zoom = createZoom(); assert.equal(zoom.current, 1);
+  assert.equal(zoomTuning.min, .01); assert.equal(zoomTuning.max, 3);
   changeZoom(zoom, -100); close(zoom.target, 1.15);
   changeZoom(zoom, 100); close(zoom.target, 1);
   changeZoom(zoom, -1e6); assert.equal(zoom.target, zoomTuning.max);
@@ -32,16 +34,23 @@ function recordingContext() {
 test('flight scales ship and stars equally around screen center without mutating game', () => {
   const game = createGame(); game.mode = 'flight';
   const original = structuredClone(game);
-  for (const [width, height] of [[1280,800], [900,650]]) for (const zoom of [.25,1,3]) {
+  const originalFields = structuredClone(asteroidFields);
+  for (const [width, height] of [[1280,800], [900,650]]) for (const zoom of [.01,.25,1,3]) {
     const { ctx, calls } = recordingContext();
     render(ctx, game, width, height, zoom);
+    assert.ok(calls.length < 50000, 'Distant zoom must keep drawing work bounded');
     const scales = calls.filter(([name]) => name === 'scale');
-    assert.equal(scales.length, 2); assert.deepEqual(scales[0], scales[1]);
+    assert.equal(scales.length, zoom === .01 ? 1 : 2);
+    if (zoom !== .01) assert.deepEqual(scales[0], scales[1]);
     const translations = calls.filter(([name]) => name === 'translate');
     assert.deepEqual(translations[0], ['translate', width / 2, height / 2]);
-    assert.deepEqual(translations[2], ['translate', width / 2, height / 2]);
+    if (zoom !== .01) assert.deepEqual(translations[2], ['translate', width / 2, height / 2]);
+    else assert.ok(calls.some(call => call[0] === 'moveTo' && call[1] === width / 2 && call[2] === height / 2 - 6));
   }
   assert.deepEqual(game, original);
+  game.ship.position.x += 10000;
+  render(recordingContext().ctx, game, 1280, 800, .01);
+  assert.deepEqual(asteroidFields, originalFields);
 });
 test('interior rendering is identical at all space zoom levels', () => {
   const game = createGame(); const a = recordingContext(), b = recordingContext();
